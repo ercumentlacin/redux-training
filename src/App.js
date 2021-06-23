@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
@@ -5,21 +6,24 @@ import HooksCakeContainer from './components/HooksCakeContainer';
 import IceCreamContainer from './components/IceCreamContainer';
 import NewCakeContainer from './components/NewCakeContainer';
 
-import './App.css';
 import ItemContainer from './components/ItemContainer';
+import UserContainer from './components/UserContainer';
+import './App.css';
 
 function App() {
   return (
     <Provider store={store}>
       <div className="App">
-        <HooksCakeContainer />
+        {/* <HooksCakeContainer />
         <hr />
         <IceCreamContainer />
         <hr />
         <NewCakeContainer />
         <hr />
         <ItemContainer cake />
-        <ItemContainer />
+        <ItemContainer /> */}
+
+        <UserContainer />
       </div>
     </Provider>
   );
