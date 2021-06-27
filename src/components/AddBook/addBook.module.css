@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.form {
+  padding-inline: 1rem;
+  margin-block: auto;
+}
+
+.bookSaveButton {
+  color: #fff;
+  background: hsl(48deg 6% 16%);
+  border-color: hsl(48deg 6% 16%);
+}
+.bookSaveButton:hover,
+.bookSaveButton:active,
+.bookSaveButton:focus {
+  background: hsl(48deg 6% 25%);
+  border-color: hsl(48deg 6% 25%);
+}
