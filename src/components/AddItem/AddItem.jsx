@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import styles from './addItem.module.css';
 
 function AddItem() {
+  // eslint-disable-next-line no-unused-vars
   const [path, setPath] = useState('');
   let history = useHistory();
   const changePath = (path) => {
@@ -12,8 +13,6 @@ function AddItem() {
       history.push(`/ekle/${path}`);
     };
   };
-
-  console.log(path);
 
   return (
     <Fragment>

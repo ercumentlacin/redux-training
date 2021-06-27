@@ -22,7 +22,6 @@ const AddBook = React.lazy(() => import('./components/AddBook/AddBook'));
 const fallback = <Spin size="large" />;
 
 function App(props) {
-  console.log(props);
   if (!props.user) return <Login userProps={props} />;
 
   return (

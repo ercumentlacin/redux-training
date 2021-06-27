@@ -1,4 +1,5 @@
 /* eslint-disable no-debugger */
+import firebase from 'firebase';
 import { PageHeader } from 'antd';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -6,30 +7,28 @@ import { Form, Input, Button, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { goBack } from '../../redux/actions/goBack';
 import styles from './addBook.module.css';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { addBook, removeBook } from '../../redux/actions/book';
 import { storageRef } from '../../firebase';
 
 const onFinishFailed = (errorInfo) => {
-  console.log('Failed:', errorInfo);
+  console.error('Failed:', errorInfo);
 };
 
-function AddBook({ goBack, user: { uid } }) {
+function AddBook({ goBack, user: { uid }, book, addBookFn }) {
+  console.log('book', book);
   let history = useHistory();
   const ref = useRef(null);
   const [image, setImage] = useState(null);
   const [oBookObj, setOBookObj] = useState({});
+  const [finish, setFinish] = useState(false);
 
   const onFinish = (values) => {
-    setOBookObj({
-      ...values,
-      imgId: image.uid,
-    });
+    setOBookObj({ ...values, imgId: image.uid, userId: uid });
+    setFinish(true);
   };
 
   const normFile = (e) => {
-    console.log('Upload event:', e);
-
     if (e.file.originFileObj) {
       setImage(e.file.originFileObj);
     }
@@ -37,37 +36,48 @@ function AddBook({ goBack, user: { uid } }) {
 
   const saveBook = () => {
     const uploadBook = storageRef
-      .ref(`images/${uid + '/' + image.uid}`)
+      .ref()
+      .child(`images/${uid + '/' + image.uid}`)
       .put(image);
-
-    console.log(uploadBook);
-    debugger;
 
     uploadBook.on(
       'state, changed',
       (snapshot) => {
-        console.log(snapshot);
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+        }
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       },
       () => {
-        storageRef
-          .ref('images')
-          .child(image.uid)
-          .getDownloadURL()
-          .then((url) => console.log(url));
+        uploadBook.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          console.error('File available at', downloadURL);
+        });
       }
     );
-
-    addBook(oBookObj);
   };
 
   const onButtonClick = () => {
     // `current` points to the mounted text input element
     ref.current.focus();
-    console.log('hello');
   };
+
+  useEffect(() => {
+    if (finish) {
+      addBookFn(oBookObj);
+      setFinish(false);
+    }
+  }, [finish]);
 
   return (
     <section className={styles.wrapper}>
@@ -149,7 +159,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     goBack: (history) => dispatch(goBack(history)),
-    addBook: (book) => dispatch(addBook(book)),
+    addBookFn: (book) => dispatch(addBook(book)),
     removeBook: (book) => dispatch(removeBook(book)),
   };
 };

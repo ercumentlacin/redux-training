@@ -2,8 +2,6 @@ import { auth, provider } from '../../firebase';
 import styles from './login.module.css';
 
 function Login({ userProps }) {
-  console.log(userProps);
-
   const signIn = () => {
     auth
       .signInWithPopup(provider)

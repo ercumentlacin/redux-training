@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import { ADD_BOOK, REMOVE_BOOK } from '../types/book';
 
 export const addBook = (book) => {
