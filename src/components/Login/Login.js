@@ -19,7 +19,7 @@ function Login({ userProps }) {
   return (
     <section className={styles.wrapper}>
       <div className={styles.logo}>
-        <img src="logo.png" alt="logo" />
+        <img src="/logo.png" alt="logo" />
       </div>
 
       <button onClick={signIn}>Sign In</button>
