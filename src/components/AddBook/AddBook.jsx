@@ -1,15 +1,16 @@
 /* eslint-disable no-debugger */
-import firebase from 'firebase';
-import { PageHeader } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Form, Input, Button, Upload } from 'antd';
+import firebase from 'firebase';
+import { Form, Input, Button, Upload, PageHeader } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { v4 as uuidv4 } from 'uuid';
+
 import { goBack } from '../../redux/actions/goBack';
-import styles from './addBook.module.css';
-import { useEffect, useRef, useState } from 'react';
 import { addBook, removeBook } from '../../redux/actions/book';
-import { storageRef } from '../../firebase';
+import db, { storageRef } from '../../firebase';
+import styles from './addBook.module.css';
 
 const onFinishFailed = (errorInfo) => {
   console.error('Failed:', errorInfo);
@@ -23,11 +24,13 @@ function AddBook({ goBack, user: { uid }, book, addBookFn }) {
   const [oBookObj, setOBookObj] = useState({});
   const [finish, setFinish] = useState(false);
 
+  // kaydet butonu
   const onFinish = (values) => {
-    setOBookObj({ ...values, imgId: image.uid, userId: uid });
+    setOBookObj({ ...values, imgId: image.uid, userId: uid, id: uuidv4() });
     setFinish(true);
   };
 
+  // görsel yükle
   const normFile = (e) => {
     if (e.file.originFileObj) {
       setImage(e.file.originFileObj);
@@ -68,7 +71,6 @@ function AddBook({ goBack, user: { uid }, book, addBookFn }) {
   };
 
   const onButtonClick = () => {
-    // `current` points to the mounted text input element
     ref.current.focus();
   };
 
@@ -78,6 +80,20 @@ function AddBook({ goBack, user: { uid }, book, addBookFn }) {
       setFinish(false);
     }
   }, [finish]);
+
+  useEffect(() => {
+    if (book && book.length) {
+      delete oBookObj['upload'];
+      oBookObj['timestamp'] = firebase.firestore.FieldValue.serverTimestamp();
+
+      const docRef = db
+        .collection('users')
+        .doc(oBookObj.userId)
+        .collection('books')
+        .doc(oBookObj.id);
+      docRef.set(oBookObj);
+    }
+  }, [book]);
 
   return (
     <section className={styles.wrapper}>
@@ -104,7 +120,7 @@ function AddBook({ goBack, user: { uid }, book, addBookFn }) {
       >
         <Form.Item
           label="Kitap Adı"
-          name="kitapAdi"
+          name="bookName"
           rules={[
             {
               required: true,
