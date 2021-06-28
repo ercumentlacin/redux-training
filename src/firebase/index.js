@@ -1,12 +1,13 @@
+/* eslint-disable no-undef */
 import firebase from 'firebase';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCuqtMUxBBpCw9BSA7_IUdyqe5oqGcyeTE',
-  authDomain: 'notion-clone-1ca93.firebaseapp.com',
-  projectId: 'notion-clone-1ca93',
-  storageBucket: 'notion-clone-1ca93.appspot.com',
-  messagingSenderId: '527673172871',
-  appId: '1:527673172871:web:09ec0aae9eb2d1852ca922',
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
